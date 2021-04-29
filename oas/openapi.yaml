@@ -1,0 +1,575 @@
+openapi: 3.0.0
+
+info:
+  title: dev sampel for golang
+  description: golangで開発用のサンプルを作る
+  version: 1.0.0
+
+tags:
+  - name: utility
+  - name: auth
+  - name: user
+  - name: post
+  - name: image
+
+paths:
+  /ping:
+    get:
+      tags:
+        - utility
+      summary: health check
+      responses:
+        204:
+          description: success to check
+
+  /login:
+    post:
+      tags:
+        - auth
+      summary: login
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/AuthResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /logout:
+    delete:
+      tags:
+        - auth
+      summary: logout
+      parameters:
+        - $ref: "#/components/parameters/Session"
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+  /users:
+    get:
+      tags:
+        - user
+      summary: get all active users
+      parameters:
+        - $ref: "#/components/parameters/Session"
+      responses:
+        200:
+          $ref: "#/components/responses/UserListResponse"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - user
+      summary: create new user
+      requestBody:
+        $ref: "#/components/requestBodies/CreateUserRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/UserResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      summary: get by userId
+      parameters:
+        - $ref: "#/components/parameters/PathUserId"
+        - $ref: "#/components/parameters/Session"
+      responses:
+        200:
+          $ref: "#/components/responses/UserResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      tags:
+        - user
+      summary: updage by userId
+      description: 本人のみ可能
+      parameters:
+        - $ref: "#/components/parameters/PathUserId"
+        - $ref: "#/components/parameters/Session"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateUserRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/UserResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - user
+      summary: delete user by userId
+      description: 本人のみ可能
+      parameters:
+        - $ref: "#/components/parameters/PathUserId"
+        - $ref: "#/components/parameters/Session"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateUserRequest"
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  
+  /posts:
+    get:
+      tags:
+        - post
+      summary: get all post
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/Session"
+      responses:
+        200:
+          $ref: "#/components/responses/PostListResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - post
+      summary: create new post
+      parameters:
+        - $ref: "#/components/parameters/Session"
+      requestBody:
+        $ref: "#/components/requestBodies/CreatePostRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/PostResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+  /posts/{postId}:
+    get:
+      tags:
+        - post
+      summary: get by postId
+      parameters:
+        - $ref: "#/components/parameters/PathPostId"
+        - $ref: "#/components/parameters/Session"
+      responses:
+        200:
+          $ref: "#/components/responses/PostResponse"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      tags:
+        - post
+      summary: updage by postId
+      description: 投稿者のみ可能
+      parameters:
+        - $ref: "#/components/parameters/PathUserId"
+        - $ref: "#/components/parameters/Session"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdatePostRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/PostResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - post
+      summary: delete post by postId
+      description: 投稿者のみ可能
+      parameters:
+        - $ref: "#/components/parameters/PathUserId"
+        - $ref: "#/components/parameters/Session"
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  
+  /avatar:
+    post:
+      tags:
+        - image
+      parameters:
+        - $ref: "#/components/parameters/Session"
+      requestBody:
+        $ref: "#/components/requestBodies/UploadImageRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/ImageResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  
+  /images:
+    post:
+      tags:
+        - image
+      parameters:
+        - $ref: "#/components/parameters/Session"
+      requestBody:
+        $ref: "#/components/requestBodies/UploadImageListRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/ImageListResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        accountId:
+          type: string
+        email:
+          type: string
+        profile:
+          $ref: "#/components/schemas/Profile"
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        avatarUrl:
+          type: string
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        author:
+          $ref: "#/components/schemas/User"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+        url: 
+          type: string
+    Auth:
+      type: object
+      properties:
+        token:
+          type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+  parameters:
+    Session:
+      name: _session
+      in: cookie
+      required: false
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: default is 10
+      schema:
+        type: integer
+    Offset:
+      name: offset
+      in: query
+      required: false
+      description: defailt is 1
+      schema:
+        type: integer
+    PathUserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+    PathPostId:
+      name: postId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  requestBodies:
+    LoginRequest:
+      description: login request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              accountId:
+                type: string
+              password:
+                type: string
+    CreateUserRequest:
+      description: create user request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              accountId:
+                type: string
+              password:
+                type: string
+              passwordConfirm:
+                type: string
+    UpdateUserRequest:
+      description: update user request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              avatarUrl:
+                type: string
+              email:
+                type: string
+    CreatePostRequest:
+      description: create new post request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              body:
+                type: string
+              tags:
+                type: array
+                items:
+                  type: string
+              images:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Image"
+    UpdatePostRequest:
+      description: update post request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              body:
+                type: string
+              tags:
+                type: array
+                items:
+                  type: string
+              images:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Image"
+    UploadImageRequest:
+      description: upload one image
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+    UploadImageListRequest:
+      description: upload some images. N is 1, 2, 3...
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              imageN:
+                type: string
+                format: binary
+
+  responses:
+    AuthResponse:
+      description: success to auth response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Auth"
+    UserResponse:
+      description: one user
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/User"
+    UserListResponse:
+      description: user list
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/User"
+    PostResponse:
+      description: one post
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Post"
+    PostListResponse:
+      description: post list
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Post"
+    ImageResponse:
+      description: one image
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Image"
+    ImageListResponse:
+      description: image list
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Image"
+    NoContent:
+      description: 204 no content
+    BadRequest:
+      description: 400 bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: 401 unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: 403 forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: 404 not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflict:
+      description: 409 conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: 500 internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
