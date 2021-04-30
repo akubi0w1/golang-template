@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"log"
 
 	"github.com/akubi0w1/golang-sample/code"
 	"github.com/akubi0w1/golang-sample/domain/entity"
@@ -35,7 +36,6 @@ func (u *UserImpl) FindAll(ctx context.Context, opts ...entity.ListOption) (enti
 	return toEntityUsers(users), nil
 }
 
-// TODO-akubi: add test
 func (u *UserImpl) FindByAccountID(ctx context.Context, accountID entity.AccountID) (entity.User, error) {
 	user, err := u.cli.User.Query().
 		Where(
@@ -52,7 +52,6 @@ func (u *UserImpl) FindByAccountID(ctx context.Context, accountID entity.Account
 	return toEntityUser(user), nil
 }
 
-// TODO-akubi: add test
 func (u *UserImpl) FindByID(ctx context.Context, id int) (entity.User, error) {
 	user, err := u.cli.User.Query().
 		Where(
@@ -69,17 +68,19 @@ func (u *UserImpl) FindByID(ctx context.Context, id int) (entity.User, error) {
 	return toEntityUser(user), nil
 }
 
-// TODO-akubi: add test
 func (u *UserImpl) Insert(ctx context.Context, user entity.User) (int, error) {
+	// TODO: profileのIDがとれない
 	profile, err := u.cli.Profile.Create().
 		SetName(user.Profile.Name).
 		SetAvatarURL(user.Profile.AvatarURL).
 		Save(ctx)
 	if err != nil {
+		log.Println("aa", err)
 		return 0, code.Errorf(code.Database, "failed to insert profile: %v", err)
 	}
 	newUser, err := u.cli.User.Create().
 		SetAccountID(user.AccountID.String()).
+		SetEmail(user.Email.String()).
 		SetPassword(user.Password).
 		SetCreatedAt(user.CreatedAt).
 		SetUpdatedAt(user.UpdatedAt).
@@ -91,7 +92,6 @@ func (u *UserImpl) Insert(ctx context.Context, user entity.User) (int, error) {
 	return newUser.ID, nil
 }
 
-// TODO-akubi: add test
 func (u *UserImpl) Count(ctx context.Context) (int, error) {
 	total, err := u.cli.User.Query().
 		Where(entuser.DeletedAtIsNil()).
@@ -100,6 +100,30 @@ func (u *UserImpl) Count(ctx context.Context) (int, error) {
 		return 0, code.Errorf(code.Database, "failed to count active user: %v", err)
 	}
 	return total, nil
+}
+
+// TODO: add test
+func (u *UserImpl) Validate(ctx context.Context, accountID entity.AccountID, email entity.Email) error {
+	existAccountID, err := u.cli.User.Query().
+		Where(entuser.AccountIDEQ(accountID.String())).
+		Exist(ctx)
+	if err != nil {
+		return code.Errorf(code.Database, "failed to check exist accountID=%s: %v", accountID, err)
+	}
+	if existAccountID {
+		return code.Errorf(code.Conflict, "accountID=%s is conflict", accountID)
+	}
+
+	existEamil, err := u.cli.User.Query().
+		Where(entuser.EmailEQ(email.String())).
+		Exist(ctx)
+	if err != nil {
+		return code.Errorf(code.Database, "failed to check exist email=%s: %v", email, err)
+	}
+	if existEamil {
+		return code.Errorf(code.Conflict, "email=%s is conflict", email)
+	}
+	return nil
 }
 
 func toEntityUser(user *ent.User) entity.User {

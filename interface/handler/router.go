@@ -30,12 +30,13 @@ func NewApp(db *ent.Client) *App {
 	}
 }
 
-func (a *App) Routing() {
+func (a *App) Routing() *chi.Mux {
 	mux := chi.NewRouter()
 	mux.Use(middleware.AccessLog)
 
 	mux.Mount("/", a.authRouter())
 	mux.Mount("/users", a.userRouter())
+	return mux
 }
 
 func (a *App) authRouter() http.Handler {
@@ -47,5 +48,6 @@ func (a *App) userRouter() http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Get("/", a.user.GetAll)
+	mux.Post("/", a.user.Create)
 	return mux
 }

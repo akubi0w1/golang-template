@@ -10,6 +10,8 @@ import (
 
 type User interface {
 	GetAll(ctx context.Context, opts ...entity.ListOption) (users entity.UserList, total int, err error)
+	Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error)
+	CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error)
 }
 
 type UserImpl struct {
@@ -28,4 +30,12 @@ func (us *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (enti
 		return entity.UserList{}, 0, err
 	}
 	return users, total, nil
+}
+
+func (us *UserImpl) Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error) {
+	return us.user.Create(ctx, accountID, email, password, "", "")
+}
+
+func (us *UserImpl) CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
+	return us.user.Create(ctx, accountID, email, password, name, avatarURL)
 }

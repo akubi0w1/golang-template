@@ -13,4 +13,5 @@ type User interface {
 	FindByID(ctx context.Context, id int) (entity.User, error)
 	Insert(ctx context.Context, user entity.User) (int, error)
 	Count(ctx context.Context) (int, error)
+	Validate(ctx context.Context, accountID entity.AccountID, email entity.Email) error
 }

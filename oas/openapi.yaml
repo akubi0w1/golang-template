@@ -413,6 +413,12 @@ components:
                 type: string
               passwordConfirm:
                 type: string
+              name:
+                type: string
+              email:
+                type: string
+              avatarUrl:
+                type: string
     UpdateUserRequest:
       description: update user request
       content:
