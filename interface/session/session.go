@@ -59,18 +59,18 @@ func (s *SessionManagerImpl) Start(w http.ResponseWriter, ss Session) (string, e
 }
 
 func (s *SessionManagerImpl) Restart(w http.ResponseWriter, r *http.Request, ss Session) (string, error) {
-	if err := deleteCookie(w, r, config.SessionName); err != nil {
+	if err := deleteCookie(w, r, config.SessionCookieName); err != nil {
 		return "", err
 	}
 	return s.Start(w, ss)
 }
 
 func (s *SessionManagerImpl) End(w http.ResponseWriter, r *http.Request) error {
-	return deleteCookie(w, r, config.SessionName)
+	return deleteCookie(w, r, config.SessionCookieName)
 }
 
 func (s *SessionManagerImpl) Get(r *http.Request) (ss Session, err error) {
-	cookie, err := r.Cookie(config.SessionName)
+	cookie, err := r.Cookie(config.SessionCookieName)
 	if err != nil {
 		return Session{}, code.Errorf(code.Session, "failed to get cookie: %v", err)
 	}
@@ -85,7 +85,7 @@ func (s *SessionManagerImpl) Get(r *http.Request) (ss Session, err error) {
 
 func setCookie(w http.ResponseWriter, value string) http.ResponseWriter {
 	cookie := &http.Cookie{
-		Name:     config.SessionName,
+		Name:     config.SessionCookieName,
 		Value:    value,
 		HttpOnly: true,
 		Secure:   true,

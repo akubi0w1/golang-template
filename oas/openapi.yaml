@@ -441,10 +441,10 @@ components:
                 type: array
                 items:
                   type: string
-              images:
+              imageIds:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Image"
+                  type: integer
     UpdatePostRequest:
       description: update post request
       content:
@@ -460,10 +460,10 @@ components:
                 type: array
                 items:
                   type: string
-              images:
+              imageIds:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Image"
+                  type: integer
     UploadImageRequest:
       description: upload one image
       content:

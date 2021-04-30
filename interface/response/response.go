@@ -31,7 +31,7 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 
 	msg := err.Error()
 	render.Status(r, statusCode)
-	render.JSON(w, r, ErrorResponse{
+	render.JSON(w, r, errorResponse{
 		Code:    statusCode,
 		Message: msg,
 	})

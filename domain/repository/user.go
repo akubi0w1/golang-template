@@ -8,8 +8,9 @@ import (
 )
 
 type User interface {
-	FindAll(ctx context.Context) (entity.UserList, error)
-	FindByAccountID(ctx context.Context, accountID entity.AccountID) (entity.UserList, error)
+	FindAll(ctx context.Context, opts ...entity.ListOption) (entity.UserList, error)
+	FindByAccountID(ctx context.Context, accountID entity.AccountID) (entity.User, error)
 	FindByID(ctx context.Context, id int) (entity.User, error)
-	Create(ctx context.Context, user entity.User) (int, error)
+	Insert(ctx context.Context, user entity.User) (int, error)
+	Count(ctx context.Context) (int, error)
 }
