@@ -149,7 +149,7 @@ func TestUser_FindByID(t *testing.T) {
 	tests := []struct {
 		name     string
 		injector func(cli *ent.Client)
-		in       int
+		in       entity.UserID
 		out      entity.User
 		code     code.Code
 	}{

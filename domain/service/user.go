@@ -10,7 +10,7 @@ import (
 
 type User interface {
 	GetAll(ctx context.Context, opts ...entity.ListOption) (users entity.UserList, total int, err error)
-	GetByID(ctx context.Context, id int) (entity.User, error)
+	GetByID(ctx context.Context, id entity.UserID) (entity.User, error)
 	GetByAccountID(ctx context.Context, accountID entity.AccountID) (entity.User, error)
 	Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error)
 }
@@ -41,7 +41,7 @@ func (srv *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (ent
 }
 
 // TODO: add test
-func (srv *UserImpl) GetByID(ctx context.Context, id int) (entity.User, error) {
+func (srv *UserImpl) GetByID(ctx context.Context, id entity.UserID) (entity.User, error) {
 	return srv.user.FindByID(ctx, id)
 }
 

@@ -51,5 +51,6 @@ func (a *App) userRouter() http.Handler {
 
 	mux.Get("/", a.user.GetAll)
 	mux.Post("/", a.user.Create)
+	mux.Get("/{userID}", a.user.GetByID)
 	return mux
 }

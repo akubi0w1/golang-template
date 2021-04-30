@@ -10,6 +10,7 @@ import (
 
 type User interface {
 	GetAll(ctx context.Context, opts ...entity.ListOption) (users entity.UserList, total int, err error)
+	GetByID(ctx context.Context, id entity.UserID) (entity.User, error)
 	Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error)
 	CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error)
 }
@@ -24,6 +25,7 @@ func NewUser(user service.User) *UserImpl {
 	}
 }
 
+// TODO: test
 func (us *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (entity.UserList, int, error) {
 	users, total, err := us.user.GetAll(ctx, opts...)
 	if err != nil {
@@ -32,10 +34,17 @@ func (us *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (enti
 	return users, total, nil
 }
 
+// TODO: test
+func (us *UserImpl) GetByID(ctx context.Context, id entity.UserID) (entity.User, error) {
+	return us.user.GetByID(ctx, id)
+}
+
+// TODO: test
 func (us *UserImpl) Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error) {
 	return us.user.Create(ctx, accountID, email, password, "", "")
 }
 
+// TODO: test
 func (us *UserImpl) CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
 	return us.user.Create(ctx, accountID, email, password, name, avatarURL)
 }

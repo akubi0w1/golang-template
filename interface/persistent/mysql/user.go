@@ -51,11 +51,11 @@ func (u *UserImpl) FindByAccountID(ctx context.Context, accountID entity.Account
 	return toEntityUser(user), nil
 }
 
-func (u *UserImpl) FindByID(ctx context.Context, id int) (entity.User, error) {
+func (u *UserImpl) FindByID(ctx context.Context, id entity.UserID) (entity.User, error) {
 	user, err := u.cli.User.Query().
 		Where(
 			entuser.And(
-				entuser.IDEQ(id),
+				entuser.IDEQ(id.Int()),
 				entuser.DeletedAtIsNil(),
 			),
 		).
@@ -78,7 +78,6 @@ func (u *UserImpl) Insert(ctx context.Context, user entity.User) (entity.User, e
 	if err != nil {
 		return entity.User{}, code.Errorf(code.Database, "failed to insert user: %v", err)
 	}
-	// TODO: profileのIDがとれない
 	profile, err := u.cli.Profile.Create().
 		SetName(user.Profile.Name).
 		SetAvatarURL(user.Profile.AvatarURL).

@@ -2,17 +2,20 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/akubi0w1/golang-sample/code"
 	"github.com/akubi0w1/golang-sample/domain/entity"
 	"github.com/akubi0w1/golang-sample/interface/request"
 	"github.com/akubi0w1/golang-sample/interface/response"
 	"github.com/akubi0w1/golang-sample/usecase"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
 
 type User interface {
 	GetAll(w http.ResponseWriter, r *http.Request)
+	GetByID(w http.ResponseWriter, r *http.Request)
 	Create(w http.ResponseWriter, r *http.Request)
 }
 
@@ -26,6 +29,7 @@ func NewUser(user usecase.User) *UserImpl {
 	}
 }
 
+// TODO: add test
 func (h *UserImpl) GetAll(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -38,6 +42,26 @@ func (h *UserImpl) GetAll(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, r, toUserListResponse(users, total))
 }
 
+// TODO: add test
+func (h *UserImpl) GetByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	userID, err := strconv.Atoi(chi.URLParam(r, "userID"))
+	if err != nil {
+		response.Error(w, r, code.Errorf(code.InvalidArgument, "invalid path parameter: %v", err))
+		return
+	}
+
+	user, err := h.user.GetByID(ctx, entity.UserID(userID))
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+	response.Success(w, r, toUserResponse(user))
+
+}
+
+// TODO: add test
 func (h *UserImpl) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
