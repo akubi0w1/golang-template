@@ -509,15 +509,27 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/User"
+            type: object
+            properties:
+              total:
+                type: integer
+              users:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
     PostResponse:
       description: one post
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Post"
+            type: object
+            properties:
+              total:
+                type: integer
+              users:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
     PostListResponse:
       description: post list
       content:

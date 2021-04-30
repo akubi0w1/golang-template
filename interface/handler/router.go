@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/akubi0w1/golang-sample/domain/service"
+	"github.com/akubi0w1/golang-sample/interface/hash"
 	"github.com/akubi0w1/golang-sample/interface/middleware"
 	"github.com/akubi0w1/golang-sample/interface/persistent/mysql"
 	"github.com/akubi0w1/golang-sample/interface/persistent/mysql/ent"
@@ -19,8 +20,9 @@ type App struct {
 
 func NewApp(db *ent.Client) *App {
 	userRepository := mysql.NewUser(db)
+	hashRepository := hash.NewHash()
 
-	userService := service.NewUser(userRepository)
+	userService := service.NewUser(userRepository, hashRepository)
 
 	userUsecase := usecase.NewUser(userService)
 

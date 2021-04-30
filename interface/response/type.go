@@ -13,6 +13,11 @@ type Profile struct {
 	AvatarURL string `json:"avatarUrl"`
 }
 
+type UserList struct {
+	Total int    `json:"total"`
+	Users []User `json:"users"`
+}
+
 type errorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`

@@ -17,11 +17,13 @@ type User interface {
 
 type UserImpl struct {
 	user repository.User
+	hash repository.Hash
 }
 
-func NewUser(user repository.User) *UserImpl {
+func NewUser(user repository.User, hash repository.Hash) *UserImpl {
 	return &UserImpl{
 		user: user,
+		hash: hash,
 	}
 }
 
@@ -50,8 +52,10 @@ func (srv *UserImpl) GetByAccountID(ctx context.Context, accountID entity.Accoun
 
 // TODO: add test
 func (srv *UserImpl) Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
-	// TODO: password hash
-	hash := "hash password"
+	hash, err := srv.hash.GenerateHashPassword(password)
+	if err != nil {
+		return entity.User{}, err
+	}
 
 	if err := srv.user.Validate(ctx, accountID, email); err != nil {
 		return entity.User{}, err

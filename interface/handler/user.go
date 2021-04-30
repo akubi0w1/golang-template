@@ -27,15 +27,15 @@ func NewUser(user usecase.User) *UserImpl {
 }
 
 func (h *UserImpl) GetAll(w http.ResponseWriter, r *http.Request) {
-	// TODO: 実装
-	render.Status(r, http.StatusNotImplemented)
-	render.JSON(w, r, struct {
-		Code    int    `json:"code"`
-		Message string `json:"message"`
-	}{
-		Code:    http.StatusNotImplemented,
-		Message: "not implemented",
-	})
+	ctx := r.Context()
+
+	users, total, err := h.user.GetAll(ctx, entity.WithLimit(10))
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	response.Success(w, r, toUserListResponse(users, total))
 }
 
 func (h *UserImpl) Create(w http.ResponseWriter, r *http.Request) {
@@ -71,5 +71,16 @@ func toUserResponse(user entity.User) response.User {
 			Name:      user.Profile.Name,
 			AvatarURL: user.Profile.AvatarURL,
 		},
+	}
+}
+
+func toUserListResponse(users entity.UserList, total int) response.UserList {
+	res := make([]response.User, 0, len(users))
+	for i := range users {
+		res = append(res, toUserResponse(users[i]))
+	}
+	return response.UserList{
+		Total: total,
+		Users: res,
 	}
 }
