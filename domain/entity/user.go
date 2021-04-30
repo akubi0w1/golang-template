@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID        int
+	ID        UserID
 	AccountID AccountID
 	Email     Email
 	Password  string
@@ -52,12 +52,14 @@ func NewUserWithProfile(accountID AccountID, email Email, password, name, avatar
 	}, nil
 }
 
-// TODO: add test
-func (u *User) SetID(id int) {
-	u.ID = id
-}
-
 type UserList []User
+
+type UserID int
+
+// TODO: add test
+func (id UserID) Int() int {
+	return int(id)
+}
 
 type AccountID string
 

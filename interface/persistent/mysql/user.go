@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"context"
-	"log"
 
 	"github.com/akubi0w1/golang-sample/code"
 	"github.com/akubi0w1/golang-sample/domain/entity"
@@ -68,28 +67,29 @@ func (u *UserImpl) FindByID(ctx context.Context, id int) (entity.User, error) {
 	return toEntityUser(user), nil
 }
 
-func (u *UserImpl) Insert(ctx context.Context, user entity.User) (int, error) {
-	// TODO: profileのIDがとれない
-	profile, err := u.cli.Profile.Create().
-		SetName(user.Profile.Name).
-		SetAvatarURL(user.Profile.AvatarURL).
-		Save(ctx)
-	if err != nil {
-		log.Println("aa", err)
-		return 0, code.Errorf(code.Database, "failed to insert profile: %v", err)
-	}
+func (u *UserImpl) Insert(ctx context.Context, user entity.User) (entity.User, error) {
 	newUser, err := u.cli.User.Create().
 		SetAccountID(user.AccountID.String()).
 		SetEmail(user.Email.String()).
 		SetPassword(user.Password).
 		SetCreatedAt(user.CreatedAt).
 		SetUpdatedAt(user.UpdatedAt).
-		SetProfile(profile).
 		Save(ctx)
 	if err != nil {
-		return 0, code.Errorf(code.Database, "failed to insert user: %v", err)
+		return entity.User{}, code.Errorf(code.Database, "failed to insert user: %v", err)
 	}
-	return newUser.ID, nil
+	// TODO: profileのIDがとれない
+	profile, err := u.cli.Profile.Create().
+		SetName(user.Profile.Name).
+		SetAvatarURL(user.Profile.AvatarURL).
+		SetUser(newUser).
+		Save(ctx)
+	if err != nil {
+		return entity.User{}, code.Errorf(code.Database, "failed to insert profile: %v", err)
+	}
+	// TODO: これ自動でセットされて欲しいところ...
+	newUser.Edges.Profile = profile
+	return toEntityUser(newUser), nil
 }
 
 func (u *UserImpl) Count(ctx context.Context) (int, error) {
@@ -128,7 +128,7 @@ func (u *UserImpl) Validate(ctx context.Context, accountID entity.AccountID, ema
 
 func toEntityUser(user *ent.User) entity.User {
 	return entity.User{
-		ID:        user.ID,
+		ID:        entity.UserID(user.ID),
 		AccountID: entity.AccountID(user.AccountID),
 		Email:     entity.Email(user.Email),
 		Password:  user.Password,

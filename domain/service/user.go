@@ -65,11 +65,10 @@ func (srv *UserImpl) Create(ctx context.Context, accountID entity.AccountID, ema
 	if err != nil {
 		return entity.User{}, err
 	}
-	newID, err := srv.user.Insert(ctx, user)
+	user, err = srv.user.Insert(ctx, user)
 	if err != nil {
 		return entity.User{}, err
 	}
-	user.SetID(newID)
 
 	return user, nil
 }

@@ -215,7 +215,7 @@ func TestUser_Insert(t *testing.T) {
 		name     string
 		injector func(cli *ent.Client)
 		in       entity.User
-		out      int
+		out      entity.User
 		code     code.Code
 	}{
 		{
@@ -232,7 +232,19 @@ func TestUser_Insert(t *testing.T) {
 					AvatarURL: "ava",
 				},
 			},
-			out:  1,
+			out: entity.User{
+				ID:        entity.UserID(1),
+				AccountID: "accid",
+				Password:  "pass",
+				Email:     "emal",
+				CreatedAt: dummyTime,
+				UpdatedAt: dummyTime,
+				Profile: entity.Profile{
+					ID:        1,
+					Name:      "name",
+					AvatarURL: "ava",
+				},
+			},
 			code: code.OK,
 		},
 	}

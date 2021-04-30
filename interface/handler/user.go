@@ -63,7 +63,7 @@ func (h *UserImpl) Create(w http.ResponseWriter, r *http.Request) {
 
 func toUserResponse(user entity.User) response.User {
 	return response.User{
-		ID:        user.ID,
+		ID:        user.ID.Int(),
 		AccountID: user.AccountID.String(),
 		Email:     user.Email.String(),
 		Profile: response.Profile{
