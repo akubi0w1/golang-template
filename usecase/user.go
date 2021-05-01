@@ -13,15 +13,18 @@ type User interface {
 	GetByID(ctx context.Context, id entity.UserID) (entity.User, error)
 	Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error)
 	CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error)
+	Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, entity.Token, error)
 }
 
 type UserImpl struct {
-	user service.User
+	user  service.User
+	token service.TokenManager
 }
 
-func NewUser(user service.User) *UserImpl {
+func NewUser(user service.User, token service.TokenManager) *UserImpl {
 	return &UserImpl{
-		user: user,
+		user:  user,
+		token: token,
 	}
 }
 
@@ -47,4 +50,18 @@ func (us *UserImpl) Create(ctx context.Context, accountID entity.AccountID, emai
 // TODO: test
 func (us *UserImpl) CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
 	return us.user.Create(ctx, accountID, email, password, name, avatarURL)
+}
+
+// TODO: test
+func (us *UserImpl) Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, entity.Token, error) {
+	user, err := us.user.Authorize(ctx, accountID, password)
+	if err != nil {
+		return entity.User{}, "", err
+	}
+
+	token, err := us.token.Generate(accountID)
+	if err != nil {
+		return entity.User{}, "", err
+	}
+	return user, token, nil
 }

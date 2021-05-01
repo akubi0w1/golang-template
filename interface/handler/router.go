@@ -5,30 +5,32 @@ import (
 
 	"github.com/akubi0w1/golang-sample/domain/service"
 	"github.com/akubi0w1/golang-sample/interface/hash"
+	"github.com/akubi0w1/golang-sample/interface/jwt"
 	"github.com/akubi0w1/golang-sample/interface/middleware"
 	"github.com/akubi0w1/golang-sample/interface/persistent/mysql"
 	"github.com/akubi0w1/golang-sample/interface/persistent/mysql/ent"
-	"github.com/akubi0w1/golang-sample/interface/session"
 	"github.com/akubi0w1/golang-sample/usecase"
 	"github.com/go-chi/chi/v5"
 )
 
 type App struct {
-	sessionManager session.SessionManager
-	user           User
+	// sessionManager session.SessionManager
+	user User
 }
 
 func NewApp(db *ent.Client) *App {
 	userRepository := mysql.NewUser(db)
 	hashRepository := hash.NewHash()
+	jwtRepository := jwt.NewJWTImpl()
 
 	userService := service.NewUser(userRepository, hashRepository)
+	tokenService := service.NewTokenManager(jwtRepository)
 
-	userUsecase := usecase.NewUser(userService)
+	userUsecase := usecase.NewUser(userService, tokenService)
 
 	return &App{
-		sessionManager: session.NewSessionManager(),
-		user:           NewUser(userUsecase),
+		// sessionManager: session.NewSessionManager(),
+		user: NewUser(userUsecase),
 	}
 }
 
@@ -45,6 +47,9 @@ func (a *App) Routing() *chi.Mux {
 
 func (a *App) authRouter() http.Handler {
 	mux := chi.NewRouter()
+
+	mux.Post("/login", a.user.Authorize)
+
 	return mux
 }
 

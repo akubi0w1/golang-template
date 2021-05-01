@@ -13,6 +13,7 @@ type User interface {
 	GetByID(ctx context.Context, id entity.UserID) (entity.User, error)
 	GetByAccountID(ctx context.Context, accountID entity.AccountID) (entity.User, error)
 	Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error)
+	Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, error)
 }
 
 type UserImpl struct {
@@ -70,5 +71,17 @@ func (srv *UserImpl) Create(ctx context.Context, accountID entity.AccountID, ema
 		return entity.User{}, err
 	}
 
+	return user, nil
+}
+
+// TODO: add test
+func (srv *UserImpl) Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, error) {
+	user, err := srv.user.FindByAccountID(ctx, accountID)
+	if err != nil {
+		return entity.User{}, err
+	}
+	if err = srv.hash.ValidatePassword(user.Password, password); err != nil {
+		return entity.User{}, err
+	}
 	return user, nil
 }

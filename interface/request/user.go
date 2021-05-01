@@ -2,6 +2,10 @@ package request
 
 import "github.com/akubi0w1/golang-sample/code"
 
+type RequestType interface {
+	Validate() error
+}
+
 type CreateUser struct {
 	AccountID       string `json:"accountId"`
 	Password        string `json:"password"`
@@ -18,6 +22,18 @@ func (req *CreateUser) Validate() error {
 	if req.Password != req.PasswordConfirm {
 		return code.Error(code.BadRequest, "password not equal password confirm")
 
+	}
+	return nil
+}
+
+type Login struct {
+	AccountID string `json:"accountId"`
+	Password  string `json:"password"`
+}
+
+func (req *Login) Validate() error {
+	if req.AccountID == "" || req.Password == "" {
+		return code.Error(code.InvalidArgument, "reequire fields is empty")
 	}
 	return nil
 }

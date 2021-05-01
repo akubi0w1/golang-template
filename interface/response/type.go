@@ -18,6 +18,10 @@ type UserList struct {
 	Users []User `json:"users"`
 }
 
+type Token struct {
+	Token string `json:"token"`
+}
+
 type errorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`

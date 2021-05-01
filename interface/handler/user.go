@@ -8,6 +8,7 @@ import (
 	"github.com/akubi0w1/golang-sample/domain/entity"
 	"github.com/akubi0w1/golang-sample/interface/request"
 	"github.com/akubi0w1/golang-sample/interface/response"
+	"github.com/akubi0w1/golang-sample/interface/session"
 	"github.com/akubi0w1/golang-sample/usecase"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -17,6 +18,7 @@ type User interface {
 	GetAll(w http.ResponseWriter, r *http.Request)
 	GetByID(w http.ResponseWriter, r *http.Request)
 	Create(w http.ResponseWriter, r *http.Request)
+	Authorize(w http.ResponseWriter, r *http.Request)
 }
 
 type UserImpl struct {
@@ -84,6 +86,26 @@ func (h *UserImpl) Create(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, r, toUserResponse(user))
 }
 
+// TODO: add test
+func (h *UserImpl) Authorize(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var req request.Login
+	if err := decodeAndValidateRequest(r.Body, &req); err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	_, token, err := h.user.Authorize(ctx, entity.AccountID(req.AccountID), req.Password)
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	session.Start(w, token)
+	response.Success(w, r, toTokenResponse(token))
+}
+
 func toUserResponse(user entity.User) response.User {
 	return response.User{
 		ID:        user.ID.Int(),
@@ -105,5 +127,11 @@ func toUserListResponse(users entity.UserList, total int) response.UserList {
 	return response.UserList{
 		Total: total,
 		Users: res,
+	}
+}
+
+func toTokenResponse(token entity.Token) response.Token {
+	return response.Token{
+		Token: token.String(),
 	}
 }
