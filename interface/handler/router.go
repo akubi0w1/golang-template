@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/akubi0w1/golang-sample/domain/service"
 	"github.com/akubi0w1/golang-sample/interface/hash"
 	"github.com/akubi0w1/golang-sample/interface/jwt"
@@ -39,41 +37,62 @@ func (a *App) Routing() *chi.Mux {
 
 	mux.Use(middleware.AccessLog)
 
-	mux.Mount("/", a.authRouter())
-	mux.Mount("/users", a.userRouter())
-
-	return mux
-}
-
-func (a *App) authRouter() http.Handler {
-	mux := chi.NewRouter()
-
+	// mux.Mount("/", a.authRouter())
+	// mux.Mount("/users", a.userRouter())
 	mux.Post("/login", a.user.Authorize)
 
-	return mux
-}
+	mux.Route("/users", func(r chi.Router) {
+		r.Post("/", a.user.Create)
 
-func (a *App) userRouter() http.Handler {
-	mux := chi.NewRouter()
+		r.Group(func(sub chi.Router) {
+			sub.Use(middleware.SaveSessionToContext)
 
-	// no session
-	mux.Post("/", a.user.Create)
-
-	// no auth
-	mux.Group(func(r chi.Router) {
-		r.Use(middleware.SaveSessionToContext)
-
-		r.Get("/", a.user.GetAll)
-		r.Get("/{userID}", a.user.GetByID)
+			sub.Get("/", a.user.GetAll)
+			sub.Get("/users/{userID}", a.user.GetByID)
+		})
 	})
 
-	// required auth
-	mux.Group(func(r chi.Router) {
-		r.Use(middleware.Authorize)
+	mux.Route("/account", func(r chi.Router) {
+		r.Group(func(sub chi.Router) {
+			sub.Use(middleware.Authorize)
 
-		// r.Put("/{userID}", )
-		// r.Delete("/{userID}", )
+			sub.Put("/", a.user.UpdateProfile)
+			sub.Delete("/", a.user.Delete)
+		})
 	})
 
 	return mux
 }
+
+// func (a *App) authRouter() http.Handler {
+// 	mux := chi.NewRouter()
+
+// 	mux.Post("/login", a.user.Authorize)
+
+// 	return mux
+// }
+
+// func (a *App) userRouter() http.Handler {
+// 	mux := chi.NewRouter()
+
+// 	// no session
+// 	mux.Post("/users", a.user.Create)
+
+// 	// no auth
+// 	mux.Group(func(r chi.Router) {
+// 		r.Use(middleware.SaveSessionToContext)
+
+// 		r.Get("/users", a.user.GetAll)
+// 		r.Get("/users/{userID}", a.user.GetByID)
+// 	})
+
+// 	// required auth
+// 	mux.Group(func(r chi.Router) {
+// 		r.Use(middleware.Authorize)
+
+// 		r.Put("/account", a.user.UpdateProfile)
+// 		r.Delete("/account", a.user.Delete)
+// 	})
+
+// 	return mux
+// }

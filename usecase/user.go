@@ -13,6 +13,8 @@ type User interface {
 	GetByID(ctx context.Context, id entity.UserID) (entity.User, error)
 	Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error)
 	CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error)
+	UpdateProfile(ctx context.Context, accountID entity.AccountID, name, avatarURL string) (entity.User, error)
+	Delete(ctx context.Context, accountID entity.AccountID) error
 	Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, entity.Token, error)
 }
 
@@ -50,6 +52,16 @@ func (us *UserImpl) Create(ctx context.Context, accountID entity.AccountID, emai
 // TODO: test
 func (us *UserImpl) CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
 	return us.user.Create(ctx, accountID, email, password, name, avatarURL)
+}
+
+// TODO: test
+func (us *UserImpl) UpdateProfile(ctx context.Context, accountID entity.AccountID, name, avatarURL string) (entity.User, error) {
+	return us.user.UpdateProfile(ctx, accountID, name, avatarURL)
+}
+
+// TODO: test
+func (us *UserImpl) Delete(ctx context.Context, accountID entity.AccountID) error {
+	return us.user.Delete(ctx, accountID)
 }
 
 // TODO: test

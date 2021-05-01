@@ -104,6 +104,7 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
+  /account:
     put:
       tags:
         - user
@@ -429,8 +430,6 @@ components:
               name:
                 type: string
               avatarUrl:
-                type: string
-              email:
                 type: string
     CreatePostRequest:
       description: create new post request

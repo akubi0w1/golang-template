@@ -52,6 +52,22 @@ func NewUserWithProfile(accountID AccountID, email Email, password, name, avatar
 	}, nil
 }
 
+// TODO: add test
+func (u *User) UpdateProfile(name string, avatarURL string) {
+	u.Profile.Name = name
+	u.Profile.AvatarURL = avatarURL
+}
+
+// TODO: add test
+func (u *User) Delete() error {
+	if u.DeletedAt != nil {
+		return code.Errorf(code.BadRequest, "userID=%d is already deleted", u.ID)
+	}
+	now := time.Now()
+	u.DeletedAt = &now
+	return nil
+}
+
 type UserList []User
 
 type UserID int

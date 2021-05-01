@@ -37,3 +37,12 @@ func (req *Login) Validate() error {
 	}
 	return nil
 }
+
+type UpdateUser struct {
+	Name      string `json:"name"`
+	AvatarURL string `json:"avatarUrl"`
+}
+
+func (req *UpdateUser) Validate() error {
+	return nil
+}

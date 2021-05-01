@@ -125,6 +125,36 @@ func (u *UserImpl) CheckDuplicate(ctx context.Context, accountID entity.AccountI
 	return nil
 }
 
+// TODO: add test
+func (u *UserImpl) UpdateProfile(ctx context.Context, user entity.User) error {
+	_, err := u.cli.Profile.UpdateOneID(user.Profile.ID).
+		SetName(user.Profile.Name).
+		SetAvatarURL(user.Profile.AvatarURL).
+		Save(ctx)
+	if err != nil {
+		return code.Errorf(code.Database, "failed to update profile by userID=%d: %v", user.ID, err)
+	}
+	_, err = u.cli.User.UpdateOneID(user.ID.Int()).
+		SetUpdatedAt(user.UpdatedAt).
+		SetEmail(user.Email.String()).
+		Save(ctx)
+	if err != nil {
+		return code.Errorf(code.Database, "failed to update userID=%d: %v", user.ID, err)
+	}
+	return nil
+}
+
+// TODO: add test
+func (u *UserImpl) Delete(ctx context.Context, user entity.User) error {
+	_, err := u.cli.User.UpdateOneID(user.ID.Int()).
+		SetDeletedAt(*user.DeletedAt).
+		Save(ctx)
+	if err != nil {
+		return code.Errorf(code.Database, "failed to up deleteFlag by userID=%d: %v", user.ID, err)
+	}
+	return nil
+}
+
 func toEntityUser(user *ent.User) entity.User {
 	return entity.User{
 		ID:        entity.UserID(user.ID),

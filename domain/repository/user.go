@@ -14,4 +14,6 @@ type User interface {
 	Insert(ctx context.Context, user entity.User) (entity.User, error)
 	Count(ctx context.Context) (int, error)
 	CheckDuplicate(ctx context.Context, accountID entity.AccountID, email entity.Email) error
+	UpdateProfile(ctx context.Context, user entity.User) error
+	Delete(ctx context.Context, user entity.User) error
 }

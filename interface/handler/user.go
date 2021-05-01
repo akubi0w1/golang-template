@@ -6,6 +6,7 @@ import (
 
 	"github.com/akubi0w1/golang-sample/code"
 	"github.com/akubi0w1/golang-sample/domain/entity"
+	"github.com/akubi0w1/golang-sample/interface/context"
 	"github.com/akubi0w1/golang-sample/interface/request"
 	"github.com/akubi0w1/golang-sample/interface/response"
 	"github.com/akubi0w1/golang-sample/interface/session"
@@ -18,6 +19,8 @@ type User interface {
 	GetAll(w http.ResponseWriter, r *http.Request)
 	GetByID(w http.ResponseWriter, r *http.Request)
 	Create(w http.ResponseWriter, r *http.Request)
+	UpdateProfile(w http.ResponseWriter, r *http.Request)
+	Delete(w http.ResponseWriter, r *http.Request)
 	Authorize(w http.ResponseWriter, r *http.Request)
 }
 
@@ -84,6 +87,48 @@ func (h *UserImpl) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, r, toUserResponse(user))
+}
+
+// TODO: add test
+func (h *UserImpl) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	accountID, err := context.GetAccountID(ctx)
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	var req request.UpdateUser
+	if err := decodeAndValidateRequest(r.Body, &req); err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	user, err := h.user.UpdateProfile(ctx, accountID, req.Name, req.AvatarURL)
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	response.Success(w, r, toUserResponse(user))
+}
+
+// TODO: add test
+func (h *UserImpl) Delete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	accountID, err := context.GetAccountID(ctx)
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	err = h.user.Delete(ctx, accountID)
+	if err != nil {
+		response.Error(w, r, err)
+		return
+	}
+
+	response.NoContent(w, r)
 }
 
 // TODO: add test
