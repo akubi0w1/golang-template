@@ -58,7 +58,6 @@ func (h *UserImpl) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.Success(w, r, toUserResponse(user))
-
 }
 
 // TODO: add test

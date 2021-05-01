@@ -34,10 +34,12 @@ func NewApp(db *ent.Client) *App {
 
 func (a *App) Routing() *chi.Mux {
 	mux := chi.NewRouter()
+
 	mux.Use(middleware.AccessLog)
 
 	mux.Mount("/", a.authRouter())
 	mux.Mount("/users", a.userRouter())
+
 	return mux
 }
 
@@ -49,8 +51,24 @@ func (a *App) authRouter() http.Handler {
 func (a *App) userRouter() http.Handler {
 	mux := chi.NewRouter()
 
-	mux.Get("/", a.user.GetAll)
+	// no session
 	mux.Post("/", a.user.Create)
-	mux.Get("/{userID}", a.user.GetByID)
+
+	// no auth
+	mux.Group(func(r chi.Router) {
+		r.Use(middleware.SaveSessionToContext)
+
+		r.Get("/", a.user.GetAll)
+		r.Get("/{userID}", a.user.GetByID)
+	})
+
+	// required auth
+	mux.Group(func(r chi.Router) {
+		r.Use(middleware.Authorize)
+
+		// r.Put("/{userID}", )
+		// r.Delete("/{userID}", )
+	})
+
 	return mux
 }

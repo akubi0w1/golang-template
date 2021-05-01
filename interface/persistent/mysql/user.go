@@ -102,7 +102,7 @@ func (u *UserImpl) Count(ctx context.Context) (int, error) {
 }
 
 // TODO: add test
-func (u *UserImpl) Validate(ctx context.Context, accountID entity.AccountID, email entity.Email) error {
+func (u *UserImpl) CheckDuplicate(ctx context.Context, accountID entity.AccountID, email entity.Email) error {
 	existAccountID, err := u.cli.User.Query().
 		Where(entuser.AccountIDEQ(accountID.String())).
 		Exist(ctx)

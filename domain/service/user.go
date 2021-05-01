@@ -57,7 +57,7 @@ func (srv *UserImpl) Create(ctx context.Context, accountID entity.AccountID, ema
 		return entity.User{}, err
 	}
 
-	if err := srv.user.Validate(ctx, accountID, email); err != nil {
+	if err := srv.user.CheckDuplicate(ctx, accountID, email); err != nil {
 		return entity.User{}, err
 	}
 

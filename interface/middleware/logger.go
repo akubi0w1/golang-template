@@ -4,11 +4,13 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/akubi0w1/golang-sample/interface/session"
 	"github.com/akubi0w1/golang-sample/log"
 )
 
 func AccessLog(handler http.Handler) http.Handler {
 	logger := log.New()
+	sm := session.NewSessionManager()
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		// TODO-akubi: accessLogに何を載せるか
 		_host, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -18,8 +20,12 @@ func AccessLog(handler http.Handler) http.Handler {
 		_method := r.Method
 		_query := r.URL.RawQuery
 		_path := r.URL.Path
-		logger.Info("ip: %s, method: %s, query: %s, pathParam: %s",
+
+		ss, _ := sm.Get(r)
+
+		logger.Info("ip: %s, accountID: %s, method: %s, query: %s, pathParam: %s",
 			_host,
+			ss.GetAccountID(),
 			_method,
 			_query,
 			_path,
