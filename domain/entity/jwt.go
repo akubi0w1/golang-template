@@ -9,7 +9,7 @@ func (t Token) String() string {
 }
 
 type Claims struct {
-	AccountID AccountID `json:"accountId"`
+	AccountID
 }
 
 func NewClaims(accountID AccountID) (Claims, error) {
@@ -19,8 +19,4 @@ func NewClaims(accountID AccountID) (Claims, error) {
 	return Claims{
 		AccountID: accountID,
 	}, nil
-}
-
-func (c *Claims) GetAccountID() AccountID {
-	return c.AccountID
 }
