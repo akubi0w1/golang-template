@@ -30,7 +30,6 @@ func NewUser(user service.User, token service.TokenManager) *UserImpl {
 	}
 }
 
-// TODO: test
 func (us *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (entity.UserList, int, error) {
 	users, total, err := us.user.GetAll(ctx, opts...)
 	if err != nil {
@@ -39,32 +38,26 @@ func (us *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (enti
 	return users, total, nil
 }
 
-// TODO: test
 func (us *UserImpl) GetByID(ctx context.Context, id entity.UserID) (entity.User, error) {
 	return us.user.GetByID(ctx, id)
 }
 
-// TODO: test
 func (us *UserImpl) Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password string) (entity.User, error) {
 	return us.user.Create(ctx, accountID, email, password, "", "")
 }
 
-// TODO: test
 func (us *UserImpl) CreateWithProfile(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
 	return us.user.Create(ctx, accountID, email, password, name, avatarURL)
 }
 
-// TODO: test
 func (us *UserImpl) UpdateProfile(ctx context.Context, accountID entity.AccountID, name, avatarURL string) (entity.User, error) {
 	return us.user.UpdateProfile(ctx, accountID, name, avatarURL)
 }
 
-// TODO: test
 func (us *UserImpl) Delete(ctx context.Context, accountID entity.AccountID) error {
 	return us.user.Delete(ctx, accountID)
 }
 
-// TODO: test
 func (us *UserImpl) Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, entity.Token, error) {
 	user, err := us.user.Authorize(ctx, accountID, password)
 	if err != nil {
