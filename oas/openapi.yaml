@@ -104,6 +104,7 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
+  /account:
     put:
       tags:
         - user
@@ -413,6 +414,12 @@ components:
                 type: string
               passwordConfirm:
                 type: string
+              name:
+                type: string
+              email:
+                type: string
+              avatarUrl:
+                type: string
     UpdateUserRequest:
       description: update user request
       content:
@@ -423,8 +430,6 @@ components:
               name:
                 type: string
               avatarUrl:
-                type: string
-              email:
                 type: string
     CreatePostRequest:
       description: create new post request
@@ -441,10 +446,10 @@ components:
                 type: array
                 items:
                   type: string
-              images:
+              imageIds:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Image"
+                  type: integer
     UpdatePostRequest:
       description: update post request
       content:
@@ -460,10 +465,10 @@ components:
                 type: array
                 items:
                   type: string
-              images:
+              imageIds:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Image"
+                  type: integer
     UploadImageRequest:
       description: upload one image
       content:
@@ -503,15 +508,27 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/User"
+            type: object
+            properties:
+              total:
+                type: integer
+              users:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
     PostResponse:
       description: one post
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Post"
+            type: object
+            properties:
+              total:
+                type: integer
+              users:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
     PostListResponse:
       description: post list
       content:

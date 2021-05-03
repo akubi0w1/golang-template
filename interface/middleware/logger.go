@@ -18,6 +18,7 @@ func AccessLog(handler http.Handler) http.Handler {
 		_method := r.Method
 		_query := r.URL.RawQuery
 		_path := r.URL.Path
+
 		logger.Info("ip: %s, method: %s, query: %s, pathParam: %s",
 			_host,
 			_method,

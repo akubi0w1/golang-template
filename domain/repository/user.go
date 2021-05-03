@@ -8,8 +8,12 @@ import (
 )
 
 type User interface {
-	FindAll(ctx context.Context) (entity.UserList, error)
-	FindByAccountID(ctx context.Context, accountID entity.AccountID) (entity.UserList, error)
-	FindByID(ctx context.Context, id int) (entity.User, error)
-	Create(ctx context.Context, user entity.User) (int, error)
+	FindAll(ctx context.Context, opts ...entity.ListOption) (entity.UserList, error)
+	FindByAccountID(ctx context.Context, accountID entity.AccountID) (entity.User, error)
+	FindByID(ctx context.Context, id entity.UserID) (entity.User, error)
+	Insert(ctx context.Context, user entity.User) (entity.User, error)
+	Count(ctx context.Context) (int, error)
+	CheckDuplicate(ctx context.Context, accountID entity.AccountID, email entity.Email) error
+	UpdateProfile(ctx context.Context, user entity.User) error
+	Delete(ctx context.Context, user entity.User) error
 }

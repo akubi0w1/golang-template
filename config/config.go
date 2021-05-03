@@ -3,30 +3,30 @@ package config
 import "os"
 
 var (
-	SessionName string = ""
-	Env         string = ""
+	SessionCookieName string = ""
+	Env               string = ""
 )
 
 const (
-	defaultSessionName = "_default_session"
-	defaultEnv         = "development"
+	defaultSessionCookieName = "_session"
+	defaultEnv               = "development"
 )
 
 func init() {
 	Env = os.Getenv("ENV")
-	if !IsProduct() {
+	if !IsProduction() {
 		Env = defaultEnv
 	}
 
-	SessionName = os.Getenv("SESSION_NAME")
-	if SessionName == "" {
-		SessionName = defaultSessionName
+	SessionCookieName = os.Getenv("SESSION_COOKIE_NAME")
+	if SessionCookieName == "" {
+		SessionCookieName = defaultSessionCookieName
 	}
 }
 
 // TODO: add test
-func IsProduct() bool {
-	return Env == "product"
+func IsProduction() bool {
+	return Env == "production"
 }
 
 // TODO: add test

@@ -1,13 +1,13 @@
 version: '3.5'
+
 services:
   api:
     depends_on:
       - db
     build:
       context: .
-      dockerfile: ./dev.Dockerfile
+      dockerfile: ./docker/go/Dockerfile
       target: build
-    container_name: town-post-api
     environment:
       MYSQL_USER: worker
       MYSQL_PASSWORD: password
@@ -23,7 +23,6 @@ services:
 
   db:
     image: mysql:5.7
-    container_name: town-post-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: main
@@ -32,7 +31,6 @@ services:
       TZ: 'Asia/Tokyo'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     # volumes:
-    #   # この辺は必要なら適宜
     #   - ./docker/mysql/data:/var/lib/mysql
     #   - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     #   - ./docker/mysql/init.d:/docker-entrypoint-initdb.d

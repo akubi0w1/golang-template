@@ -2,17 +2,17 @@ package log
 
 import (
 	"fmt"
-	"log"
+	glog "log"
 	"os"
 )
 
 type Logger struct {
-	logger *log.Logger
+	logger *glog.Logger
 }
 
 func New() *Logger {
 	return &Logger{
-		logger: log.New(os.Stdout, "", log.Ldate|log.Ltime),
+		logger: glog.New(os.Stdout, "", glog.Ldate|glog.Ltime),
 	}
 }
 
