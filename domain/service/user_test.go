@@ -412,6 +412,7 @@ func TestUser_UpdateProfile(t *testing.T) {
 			t.Parallel()
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
+			monkey.Patch(time.Now, func() time.Time { return dummyDate })
 			mu := mock_repository.NewMockUser(ctrl)
 			mh := mock_repository.NewMockHash(ctrl)
 			tt.injector(mu)
