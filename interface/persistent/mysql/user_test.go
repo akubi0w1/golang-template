@@ -311,3 +311,178 @@ func TestUser_Count(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_CheckDuplicate(t *testing.T) {
+	ctx := context.Background()
+	dummyTime := time.Date(2021, 4, 29, 0, 0, 0, 0, time.UTC)
+	type in struct {
+		accountID entity.AccountID
+		email     entity.Email
+	}
+
+	tests := []struct {
+		name     string
+		injector func(cli *ent.Client)
+		in       in
+		code     code.Code
+	}{
+		{
+			name: "duplicate accountID",
+			injector: func(cli *ent.Client) {
+				cli.User.Create().SetAccountID("accid").SetEmail("email").SetPassword("pass").SetCreatedAt(dummyTime).SetUpdatedAt(dummyTime).Save(ctx)
+			},
+			in: in{
+				accountID: "accid",
+				email:     "email001",
+			},
+			code: code.Conflict,
+		},
+		{
+			name: "duplicate email",
+			injector: func(cli *ent.Client) {
+				cli.User.Create().SetAccountID("accid").SetEmail("email").SetPassword("pass").SetCreatedAt(dummyTime).SetUpdatedAt(dummyTime).Save(ctx)
+			},
+			in: in{
+				accountID: "accid001",
+				email:     "email",
+			},
+			code: code.Conflict,
+		},
+		{
+			name:     "no duplicate",
+			injector: func(cli *ent.Client) {},
+			in: in{
+				accountID: "accid001",
+				email:     "email",
+			},
+			code: code.OK,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			cli := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+			defer cli.Close()
+			tt.injector(cli)
+			u := NewUser(cli)
+			err := u.CheckDuplicate(ctx, tt.in.accountID, tt.in.email)
+			assert.Equal(t, tt.code, code.GetCode(err))
+		})
+	}
+}
+
+func TestUser_UpdateProfile(t *testing.T) {
+	ctx := context.Background()
+	dummyTime := time.Date(2021, 4, 29, 0, 0, 0, 0, time.UTC)
+
+	tests := []struct {
+		name     string
+		injector func(cli *ent.Client)
+		in       entity.User
+		code     code.Code
+	}{
+		{
+			name:     "no profile",
+			injector: func(cli *ent.Client) {},
+			in: entity.User{
+				ID:        1,
+				UpdatedAt: dummyTime,
+				Profile: entity.Profile{
+					ID:        1,
+					Name:      "rename",
+					AvatarURL: "reavatar",
+				},
+			},
+			code: code.Database,
+		},
+		{
+			name:     "no user",
+			injector: func(cli *ent.Client) {},
+			in: entity.User{
+				ID:        1,
+				UpdatedAt: dummyTime,
+				Profile: entity.Profile{
+					ID:        1,
+					Name:      "rename",
+					AvatarURL: "reavatar",
+				},
+			},
+			code: code.Database,
+		},
+		{
+			name: "success",
+			injector: func(cli *ent.Client) {
+				p, _ := cli.Profile.Create().SetName("name").SetAvatarURL("avatar").Save(ctx)
+				cli.User.Create().SetAccountID("accid").SetEmail("email").SetPassword("pass").SetCreatedAt(dummyTime).SetUpdatedAt(dummyTime).SetProfile(p).Save(ctx)
+			},
+			in: entity.User{
+				ID:        1,
+				UpdatedAt: dummyTime,
+				Profile: entity.Profile{
+					ID:        1,
+					Name:      "rename",
+					AvatarURL: "reavatar",
+				},
+			},
+			code: code.OK,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			cli := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+			defer cli.Close()
+			tt.injector(cli)
+			u := NewUser(cli)
+			err := u.UpdateProfile(ctx, tt.in)
+			assert.Equal(t, tt.code, code.GetCode(err))
+		})
+	}
+}
+
+func TestUser_Delete(t *testing.T) {
+	ctx := context.Background()
+	dummyTime := time.Date(2021, 4, 29, 0, 0, 0, 0, time.UTC)
+
+	tests := []struct {
+		name     string
+		injector func(cli *ent.Client)
+		in       entity.User
+		code     code.Code
+	}{
+		{
+			name:     "no user",
+			injector: func(cli *ent.Client) {},
+			in: entity.User{
+				ID:        1,
+				DeletedAt: &dummyTime,
+			},
+			code: code.Database,
+		},
+		{
+			name: "success",
+			injector: func(cli *ent.Client) {
+				cli.User.Create().SetAccountID("accid").SetEmail("email").SetPassword("pass").SetCreatedAt(dummyTime).SetUpdatedAt(dummyTime).Save(ctx)
+			},
+			in: entity.User{
+				ID:        1,
+				DeletedAt: &dummyTime,
+			},
+			code: code.OK,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			cli := enttest.Open(t, "sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+			defer cli.Close()
+			tt.injector(cli)
+			u := NewUser(cli)
+			err := u.Delete(ctx, tt.in)
+			assert.Equal(t, tt.code, code.GetCode(err))
+		})
+	}
+}

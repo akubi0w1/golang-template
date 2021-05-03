@@ -86,7 +86,7 @@ func (u *UserImpl) Insert(ctx context.Context, user entity.User) (entity.User, e
 	if err != nil {
 		return entity.User{}, code.Errorf(code.Database, "failed to insert profile: %v", err)
 	}
-	// TODO: これ自動でセットされて欲しいところ...
+	// HACK: これ自動でセットされて欲しいところ...
 	newUser.Edges.Profile = profile
 	return toEntityUser(newUser), nil
 }
@@ -101,7 +101,6 @@ func (u *UserImpl) Count(ctx context.Context) (int, error) {
 	return total, nil
 }
 
-// TODO: add test
 func (u *UserImpl) CheckDuplicate(ctx context.Context, accountID entity.AccountID, email entity.Email) error {
 	existAccountID, err := u.cli.User.Query().
 		Where(entuser.AccountIDEQ(accountID.String())).
@@ -125,7 +124,6 @@ func (u *UserImpl) CheckDuplicate(ctx context.Context, accountID entity.AccountI
 	return nil
 }
 
-// TODO: add test
 func (u *UserImpl) UpdateProfile(ctx context.Context, user entity.User) error {
 	_, err := u.cli.Profile.UpdateOneID(user.Profile.ID).
 		SetName(user.Profile.Name).
@@ -136,7 +134,6 @@ func (u *UserImpl) UpdateProfile(ctx context.Context, user entity.User) error {
 	}
 	_, err = u.cli.User.UpdateOneID(user.ID.Int()).
 		SetUpdatedAt(user.UpdatedAt).
-		SetEmail(user.Email.String()).
 		Save(ctx)
 	if err != nil {
 		return code.Errorf(code.Database, "failed to update userID=%d: %v", user.ID, err)
@@ -144,7 +141,6 @@ func (u *UserImpl) UpdateProfile(ctx context.Context, user entity.User) error {
 	return nil
 }
 
-// TODO: add test
 func (u *UserImpl) Delete(ctx context.Context, user entity.User) error {
 	_, err := u.cli.User.UpdateOneID(user.ID.Int()).
 		SetDeletedAt(*user.DeletedAt).
