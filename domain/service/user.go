@@ -30,7 +30,6 @@ func NewUser(user repository.User, hash repository.Hash) *UserImpl {
 	}
 }
 
-// TODO: add test
 func (srv *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (entity.UserList, int, error) {
 	users, err := srv.user.FindAll(ctx, opts...)
 	if err != nil {
@@ -43,17 +42,14 @@ func (srv *UserImpl) GetAll(ctx context.Context, opts ...entity.ListOption) (ent
 	return users, total, nil
 }
 
-// TODO: add test
 func (srv *UserImpl) GetByID(ctx context.Context, id entity.UserID) (entity.User, error) {
 	return srv.user.FindByID(ctx, id)
 }
 
-// TODO: add test
 func (srv *UserImpl) GetByAccountID(ctx context.Context, accountID entity.AccountID) (entity.User, error) {
 	return srv.user.FindByAccountID(ctx, accountID)
 }
 
-// TODO: add test
 func (srv *UserImpl) Create(ctx context.Context, accountID entity.AccountID, email entity.Email, password, name, avatarURL string) (entity.User, error) {
 	hash, err := srv.hash.GenerateHashPassword(password)
 	if err != nil {
@@ -76,7 +72,6 @@ func (srv *UserImpl) Create(ctx context.Context, accountID entity.AccountID, ema
 	return user, nil
 }
 
-// TODO: add test
 func (srv *UserImpl) UpdateProfile(ctx context.Context, accountID entity.AccountID, name string, avatarURL string) (entity.User, error) {
 	user, err := srv.user.FindByAccountID(ctx, accountID)
 	if err != nil {
@@ -89,7 +84,6 @@ func (srv *UserImpl) UpdateProfile(ctx context.Context, accountID entity.Account
 	return user, nil
 }
 
-// TODO: add test
 func (srv *UserImpl) Delete(ctx context.Context, accountID entity.AccountID) error {
 	user, err := srv.user.FindByAccountID(ctx, accountID)
 	if err != nil {
@@ -105,7 +99,6 @@ func (srv *UserImpl) Delete(ctx context.Context, accountID entity.AccountID) err
 	return nil
 }
 
-// TODO: add test
 func (srv *UserImpl) Authorize(ctx context.Context, accountID entity.AccountID, password string) (entity.User, error) {
 	user, err := srv.user.FindByAccountID(ctx, accountID)
 	if err != nil {
