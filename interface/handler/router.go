@@ -63,36 +63,3 @@ func (a *App) Routing() *chi.Mux {
 
 	return mux
 }
-
-// func (a *App) authRouter() http.Handler {
-// 	mux := chi.NewRouter()
-
-// 	mux.Post("/login", a.user.Authorize)
-
-// 	return mux
-// }
-
-// func (a *App) userRouter() http.Handler {
-// 	mux := chi.NewRouter()
-
-// 	// no session
-// 	mux.Post("/users", a.user.Create)
-
-// 	// no auth
-// 	mux.Group(func(r chi.Router) {
-// 		r.Use(middleware.SaveSessionToContext)
-
-// 		r.Get("/users", a.user.GetAll)
-// 		r.Get("/users/{userID}", a.user.GetByID)
-// 	})
-
-// 	// required auth
-// 	mux.Group(func(r chi.Router) {
-// 		r.Use(middleware.Authorize)
-
-// 		r.Put("/account", a.user.UpdateProfile)
-// 		r.Delete("/account", a.user.Delete)
-// 	})
-
-// 	return mux
-// }

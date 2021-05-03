@@ -36,17 +36,6 @@ func GetAccountID(ctx context.Context) (entity.AccountID, error) {
 	return ctx.Value(accountIDKey).(entity.AccountID), nil
 }
 
-// func SetSession(ctx context.Context, ss session.Session) context.Context {
-// 	return context.WithValue(ctx, sessionKey, ss)
-// }
-
-// func GetSessionFromContext(ctx context.Context) (session.Session, error) {
-// 	if ctx.Value(sessionKey) == nil {
-// 		return session.Session{}, code.Errorf(code.Context, "failed to get session from context")
-// 	}
-// 	return ctx.Value(sessionKey).(session.Session), nil
-// }
-
 func GetByKeyFromContext(ctx context.Context, key string) (interface{}, error) {
 	if ctx.Value(key) == nil {
 		return nil, code.Errorf(code.Context, "failed to get value from context: key=%v", key)
