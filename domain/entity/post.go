@@ -13,4 +13,18 @@ type Post struct {
 	AuthorID  UserID
 }
 
+// TODO: add test
+func NewPost(title, body string, authorID UserID, tags TagList, images ImageList) (Post, error) {
+	now := time.Now()
+	return Post{
+		Title:     title,
+		Body:      body,
+		CreatedAt: now,
+		UpdatedAt: now,
+		Tags:      tags,
+		Images:    images,
+		AuthorID:  authorID,
+	}, nil
+}
+
 type PostList []Post
