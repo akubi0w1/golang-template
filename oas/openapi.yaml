@@ -319,8 +319,8 @@ components:
           type: string
         updatedAt:
           type: string
-        author:
-          $ref: "#/components/schemas/User"
+        authorId:
+          type: integer
         tags:
           type: array
           items:
