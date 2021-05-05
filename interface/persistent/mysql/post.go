@@ -33,7 +33,15 @@ func (p *PostImpl) Insert(ctx context.Context, post entity.Post) (entity.Post, e
 	if err != nil {
 		return entity.Post{}, code.Errorf(code.Database, "failed to insert: %v", err)
 	}
-	// TODO: edge of author, tags, images
+	newPost, err = p.cli.Post.Query().
+		Where(entpost.IDEQ(newPost.ID)).
+		WithAuthor().
+		WithTags().
+		WithImages().
+		Only(ctx)
+	if err != nil {
+		return entity.Post{}, code.Errorf(code.NotFound, "failed to find new post: %v", err)
+	}
 	return toEntityPost(newPost), nil
 }
 
