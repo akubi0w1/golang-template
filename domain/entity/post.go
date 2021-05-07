@@ -13,7 +13,6 @@ type Post struct {
 	AuthorID  UserID
 }
 
-// TODO: add test
 func NewPost(title, body string, authorID UserID, tags TagList, images ImageList) (Post, error) {
 	now := time.Now()
 	return Post{

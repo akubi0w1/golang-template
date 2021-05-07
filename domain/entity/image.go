@@ -8,7 +8,6 @@ type Image struct {
 
 type ImageList []Image
 
-// TODO: add test
 func (il ImageList) GetIDs() []int {
 	ids := make([]int, 0, len(il))
 	for i := range il {
