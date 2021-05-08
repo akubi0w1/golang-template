@@ -24,7 +24,6 @@ func NewPost(post repository.Post) *PostImpl {
 	}
 }
 
-// TODO: add test
 func (p *PostImpl) Create(ctx context.Context, title, body string, authorID entity.UserID, tags entity.TagList, images entity.ImageList) (entity.Post, error) {
 	post, err := entity.NewPost(title, body, authorID, tags, images)
 	if err != nil {
@@ -37,7 +36,6 @@ func (p *PostImpl) Create(ctx context.Context, title, body string, authorID enti
 	return post, nil
 }
 
-// TODO: add test
 func (p *PostImpl) GetAll(ctx context.Context) (entity.PostList, int, error) {
 	posts, err := p.post.FindAll(ctx)
 	if err != nil {
@@ -50,7 +48,6 @@ func (p *PostImpl) GetAll(ctx context.Context) (entity.PostList, int, error) {
 	return posts, total, nil
 }
 
-// TODO: add test
 func (p *PostImpl) GetByID(ctx context.Context, id int) (entity.Post, error) {
 	return p.post.FindByID(ctx, id)
 }

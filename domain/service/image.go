@@ -22,7 +22,6 @@ func NewImage(image repository.Image) *ImageImpl {
 	}
 }
 
-// TODO: add test
 func (ii *ImageImpl) GetByIDs(ctx context.Context, ids []int) (entity.ImageList, error) {
 	return ii.image.FindByIDs(ctx, ids)
 }

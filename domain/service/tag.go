@@ -41,9 +41,11 @@ func (t *TagImpl) CreateOrGetMultiple(ctx context.Context, tags []string) (entit
 			newTags = append(newTags, _newTag)
 		}
 	}
-	_, err := t.tag.InsertBulk(ctx, newTags)
-	if err != nil {
-		return entity.TagList{}, err
+	if len(newTags) > 0 {
+		_, err := t.tag.InsertBulk(ctx, newTags)
+		if err != nil {
+			return entity.TagList{}, err
+		}
 	}
 	tagList, err := t.tag.FindByTags(ctx, tags)
 	if err != nil {
