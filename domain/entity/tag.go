@@ -25,7 +25,6 @@ func NewTag(tag string) (Tag, error) {
 
 type TagList []Tag
 
-// TODO: add test
 func (tl TagList) GetIDs() []int {
 	ids := make([]int, 0, len(tl))
 	for i := range tl {
