@@ -19,7 +19,6 @@ func NewPost(cli *ent.Client) *PostImpl {
 	}
 }
 
-// TODO: add test
 func (p *PostImpl) Insert(ctx context.Context, post entity.Post) (entity.Post, error) {
 	newPost, err := p.cli.Post.Create().
 		SetTitle(post.Title).
@@ -45,7 +44,6 @@ func (p *PostImpl) Insert(ctx context.Context, post entity.Post) (entity.Post, e
 	return toEntityPost(newPost), nil
 }
 
-// TODO: add test
 func (p *PostImpl) FindAll(ctx context.Context) (entity.PostList, error) {
 	posts, err := p.cli.Post.Query().
 		Where(entpost.DeletedAtIsNil()).
@@ -59,7 +57,6 @@ func (p *PostImpl) FindAll(ctx context.Context) (entity.PostList, error) {
 	return toEntityPostList(posts), nil
 }
 
-// TODO: add test
 func (p *PostImpl) FindByID(ctx context.Context, id int) (entity.Post, error) {
 	post, err := p.cli.Post.Query().
 		Where(entpost.DeletedAtIsNil()).
@@ -101,38 +98,6 @@ func toEntityPostList(ps []*ent.Post) entity.PostList {
 	list := make(entity.PostList, 0, len(ps))
 	for i := range ps {
 		list = append(list, toEntityPost(ps[i]))
-	}
-	return list
-}
-
-func toEntityTag(t *ent.Tag) entity.Tag {
-	return entity.Tag{
-		ID:        t.ID,
-		Tag:       t.Tag,
-		CreatedAt: t.CreatedAt,
-	}
-}
-
-func toEntityTagList(tags []*ent.Tag) entity.TagList {
-	list := make(entity.TagList, 0, len(tags))
-	for i := range tags {
-		list = append(list, toEntityTag(tags[i]))
-	}
-	return list
-}
-
-func toEntityImage(image *ent.Image) entity.Image {
-	return entity.Image{
-		ID:        image.ID,
-		URL:       image.URL,
-		CreatedBy: entity.UserID(image.Edges.UploadedBy.ID),
-	}
-}
-
-func toEntityImageList(images []*ent.Image) entity.ImageList {
-	list := make(entity.ImageList, 0, len(images))
-	for i := range images {
-		list = append(list, toEntityImage(images[i]))
 	}
 	return list
 }

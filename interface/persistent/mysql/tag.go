@@ -20,7 +20,6 @@ func NewTag(cli *ent.Client) *TagImpl {
 	}
 }
 
-// TODO: add test
 func (t *TagImpl) FindByIDs(ctx context.Context, ids []int) (entity.TagList, error) {
 	if len(ids) == 0 {
 		return entity.TagList{}, nil
@@ -36,7 +35,6 @@ func (t *TagImpl) FindByIDs(ctx context.Context, ids []int) (entity.TagList, err
 	return toEntityTagList(tags), nil
 }
 
-// TODO: add test
 func (t *TagImpl) FindByTags(ctx context.Context, tags []string) (entity.TagList, error) {
 	if len(tags) == 0 {
 		return entity.TagList{}, nil
@@ -52,7 +50,6 @@ func (t *TagImpl) FindByTags(ctx context.Context, tags []string) (entity.TagList
 	return toEntityTagList(_tags), nil
 }
 
-// TODO: add test
 func (t *TagImpl) InsertBulk(ctx context.Context, tags entity.TagList) (entity.TagList, error) {
 	if len(tags) == 0 {
 		return entity.TagList{}, nil
@@ -71,11 +68,26 @@ func (t *TagImpl) InsertBulk(ctx context.Context, tags entity.TagList) (entity.T
 	return toEntityTagList(_tags), nil
 }
 
-// TODO: add test
 func (t *TagImpl) IsExist(ctx context.Context, tag string) (bool, error) {
 	isExist, err := t.cli.Tag.Query().Where(enttag.TagEQ(tag)).Exist(ctx)
 	if err != nil {
 		return false, code.Errorf(code.Database, "failed to check tag=%s is exist: %v", tag, err)
 	}
 	return isExist, nil
+}
+
+func toEntityTag(t *ent.Tag) entity.Tag {
+	return entity.Tag{
+		ID:        t.ID,
+		Tag:       t.Tag,
+		CreatedAt: t.CreatedAt,
+	}
+}
+
+func toEntityTagList(tags []*ent.Tag) entity.TagList {
+	list := make(entity.TagList, 0, len(tags))
+	for i := range tags {
+		list = append(list, toEntityTag(tags[i]))
+	}
+	return list
 }
