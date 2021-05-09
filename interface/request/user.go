@@ -2,10 +2,6 @@ package request
 
 import "github.com/akubi0w1/golang-sample/code"
 
-type RequestType interface {
-	Validate() error
-}
-
 type CreateUser struct {
 	AccountID       string `json:"accountId"`
 	Password        string `json:"password"`

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"io"
+	"time"
 
 	"github.com/akubi0w1/golang-sample/code"
 	"github.com/akubi0w1/golang-sample/interface/request"
@@ -16,4 +17,8 @@ func decodeAndValidateRequest(body io.ReadCloser, req request.RequestType) error
 		return err
 	}
 	return nil
+}
+
+func dateToString(t time.Time) string {
+	return t.Format("2006/01/02 03:04:05")
 }

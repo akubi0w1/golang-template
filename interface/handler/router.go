@@ -14,21 +14,30 @@ import (
 type App struct {
 	// sessionManager session.SessionManager
 	user User
+	post Post
 }
 
 func NewApp(db *ent.Client) *App {
 	userRepository := mysql.NewUser(db)
 	hashRepository := hash.NewHash()
 	jwtRepository := jwt.NewJWTImpl()
+	postRepository := mysql.NewPost(db)
+	tagRepository := mysql.NewTag(db)
+	imageRepository := mysql.NewImage(db)
 
 	userService := service.NewUser(userRepository, hashRepository)
 	tokenService := service.NewTokenManager(jwtRepository)
+	postService := service.NewPost(postRepository)
+	tagService := service.NewTag(tagRepository)
+	imageService := service.NewImage(imageRepository)
 
 	userUsecase := usecase.NewUser(userService, tokenService)
+	postUsecase := usecase.NewPost(postService, userService, tagService, imageService)
 
 	return &App{
 		// sessionManager: session.NewSessionManager(),
 		user: NewUser(userUsecase),
+		post: NewPost(postUsecase),
 	}
 }
 
@@ -48,7 +57,7 @@ func (a *App) Routing() *chi.Mux {
 			sub.Use(middleware.SaveSessionToContext)
 
 			sub.Get("/", a.user.GetAll)
-			sub.Get("/users/{userID}", a.user.GetByID)
+			sub.Get("/{userID}", a.user.GetByID)
 		})
 	})
 
@@ -58,6 +67,17 @@ func (a *App) Routing() *chi.Mux {
 
 			sub.Put("/", a.user.UpdateProfile)
 			sub.Delete("/", a.user.Delete)
+		})
+	})
+
+	mux.Route("/posts", func(r chi.Router) {
+		r.Get("/", a.post.GetAll)
+		r.Get("/{postID}", a.post.GetByID)
+
+		r.Group(func(sub chi.Router) {
+			sub.Use(middleware.Authorize)
+
+			sub.Post("/", a.post.Create)
 		})
 	})
 
