@@ -70,7 +70,6 @@ func (p *PostImpl) FindByID(ctx context.Context, id int) (entity.Post, error) {
 	return toEntityPost(post), nil
 }
 
-// TODO: add test
 func (p *PostImpl) Count(ctx context.Context) (int, error) {
 	total, err := p.cli.Post.Query().
 		Where(entpost.DeletedAtIsNil()).
