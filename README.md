@@ -32,3 +32,6 @@ $ make gen-mock
     - development | production
 - SESSION_COOKIE_NAME
     - セッションを持つクッキーの名前
+
+## linterについて
+- [Linters - golangci-lint](https://golangci-lint.run/usage/linters/)

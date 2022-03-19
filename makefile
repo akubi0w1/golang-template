@@ -5,6 +5,9 @@ GO_MOCK_DIRS=./usecase ./domain/service ./domain/repository
 BUILD_DIR=./build
 BUILD_NAME=api
 
+CURRENT_PATH=$(shell pwd)
+GOLANGCI_LINT_VERSION=1.42.1
+
 help: ## display help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-24s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
@@ -43,7 +46,7 @@ dev-log-db: ## watch db's log
 doc-up: ## run swagger ui
 	docker run -d -p 8888:8080 -v `pwd`:/usr/share/nginx/html/api -e API_URL=api/$(OAS_PATH) swaggerapi/swagger-ui
 
-doc-down: ## down swagger ui
+#doc-down: ## down swagger ui
 
 build-mock: ## build mock server
 	rm -rf $(MOCK_SERVER_OUT_DIR)
@@ -51,3 +54,14 @@ build-mock: ## build mock server
 		-l nodejs-server \
 		-i /work/$(OAS_PATH) \
 		-o /work/$(MOCK_SERVER_OUT_DIR)
+
+# #############################
+# lint
+# usage: go-lint
+go-lint: $(GOROOT) $(GOPATH)/bin/golangci-lint
+	$(GOPATH)/bin/golangci-lint run --config=$(CURRENT_PATH)/.golangci.yaml --sort-results
+
+## install golangci-lint
+$(GOPATH)/bin/golangci-lint: $(GOROOT)
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v$(GOLANGCI_LINT_VERSION)
+

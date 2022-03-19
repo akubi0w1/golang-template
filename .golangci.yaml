@@ -1,0 +1,356 @@
+run:
+  deadline: 5m
+  build-tags:
+    - integration
+
+issues:
+  exclude-rules:
+    - linters:
+        - lll
+      source: "//"
+    - linters:
+        - typecheck
+      source: "^//go:embed"
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - goerr113
+    - path: sample/*
+      linters:
+        - gosec
+        - wrapcheck
+        - gomnd
+        - lll
+
+linters-settings:
+  wsl:
+    # See https://github.com/bombsimon/wsl/blob/master/doc/configuration.md for
+    # documentation of available settings. These are the defaults for
+    # `golangci-lint`.
+    allow-assign-and-anything: false
+    allow-assign-and-call: true
+    allow-cuddle-declarations: true
+    allow-multiline-assign: true
+    allow-separated-leading-comment: false
+    allow-trailing-comment: false
+    force-case-trailing-whitespace: 0
+    force-err-cuddling: true
+    force-short-decl-cuddling: false
+    strict-append: true
+
+  gocyclo:
+    min-complexity: 10
+  gocritic:
+    enabled-checks:
+      - appendCombine
+      - argOrder
+      - assignOp
+      - badCall
+      - badCond
+      - boolExprSimplify
+      - builtinShadow
+      - captLocal
+      - caseOrder
+      - codegenComment
+      - commentedOutCode
+      - commentedOutImport
+      - defaultCaseOrder
+      - deprecatedComment
+      - docStub
+      - dupArg
+      - dupBranchBody
+      - dupCase
+      - dupImport
+      - dupSubExpr
+      - elseif
+      - emptyFallthrough
+      - emptyStringTest
+      - equalFold
+      - flagDeref
+      - flagName
+      - hexLiteral
+      - hugeParam
+      - importShadow
+      - indexAlloc
+      - initClause
+      - methodExprCall
+      - nestingReduce
+      - newDeref
+      - nilValReturn
+      - octalLiteral
+      - offBy1
+      - paramTypeCombine
+      - ptrToRefParam
+      - rangeExprCopy
+      - rangeValCopy
+      - regexpMust
+      - sloppyLen
+      - sloppyReassign
+      - stringXbytes
+      - switchTrue
+      - typeAssertChain
+      - typeSwitchVar
+      - typeUnparen
+      - underef
+      - unnecessaryBlock
+      - unslice
+      - valSwap
+      - weakCond
+      - wrapperFunc
+      - yodaStyleExpr
+
+# See https://golangci-lint.run/usage/linters/
+linters:
+  disable-all: true
+  enable:
+    # default enables
+
+    # 使われていないコードの検知
+    - deadcode
+    # チェック漏れしたエラーを検知
+    # enable setting
+    - errcheck
+    # コード簡略化のためのlinter
+    # enable setting
+    - gosimple
+    # 引数の不正など疑わしい構成のチェック
+    # enable setting
+    - govet
+    # 使われていない変数の確認
+    - ineffassign
+    # go vetの強化で、静的解析を実施
+    # enable setting
+    - staticcheck
+    # 使っていないstructの検知
+    # enable setting
+    - structcheck
+    # 型チェック
+    - typecheck
+    # 未使用のconstants, variables, functions, typeの検出
+    # enable setting
+    - unused
+    # 利用していないglobalな変数、定数のチェック
+    # enable setting
+    - varcheck
+
+    # not default enables
+    # 非ASCII識別子が含まれていないことを確認
+    - asciicheck
+    # 危険なunicode文字列のチェック
+    # enable setting
+    - bidichk
+    # http response bodyがcloseされているか確認
+    - bodyclose
+    # context.Contextが含まれているstructをチェック
+    - containedctx
+    # contextを継承していない関数が使われていることを検知
+    - contextcheck
+    # cyclomatic conmplexityのチェック
+    # enable setting
+    - cyclop
+    # 宣言の順序、型、定数、変数、関数の数を確認
+    # enable setting
+    - decorder
+    # インポートされたパッケージが利用可能なパッケージリストに含まれているか
+    # enable setting
+    - depguard
+    # 変なところにスペースがないかチェック
+    # enable setting
+    - dogsled
+    # コードクローンの検知(コピペチェック？)
+    # enable setting
+    - dupl
+    # time.Duration同士の掛け算が行われていないか
+    - durationcheck
+    # jsonのエンコーディングに渡された型のチェック。未サポートのオプションを検出
+    # enable setting
+    - errchkjson
+    # センチネルエラーのプレフィックスがErr、エラーの型の末尾にErrorがついているか確認
+    - errname
+    # errorの比較や変換が正しいか確認する。Go1.13から==などで比較すると、wrapされているエラーをうまく比較できないことがあるため
+    # enable setting
+    - errorlint
+    # switchでenumの値をすべて網羅しているか
+    # enable setting
+    - exhaustive
+    # structの初期化時にすべてのフィールドが初期化されているかチェック
+    # enable setting
+    - exhaustivestruct
+    # ループ内での変数の使われ方を確認する
+    - exportloopref
+    # linters-setting内で設定された書き方を使えなくする
+    # enable setting
+    - forbidigo
+    # 強制のtype assertionを禁止する
+    - forcetypeassert
+    # 関数名の長さを検知
+    # enable setting
+    - funlen
+    # importの順番整理
+    # enable setting
+    - gci
+    # global変数とエラーをチェック
+    # パッケージスコープで宣言されているglobal変数かつ、パッケージ内のどの関数からも読み書きできる変数を検知する
+    - gochecknoglobals
+    # init関数が存在しないことを確認する
+    - gochecknoinits
+    # 関数のcognitive complexityを検知
+    # enable setting
+    - gocognit
+    # 定数に置き換えられる文字列がないか確認します
+    # enable setting
+    - goconst
+    # バグ、パフォーマンス、styleについて検査する
+    # enable setting
+    - gocritic
+    # 関数のcyclomatic complecityの検査
+    # enable setting
+    - gocyclo
+    # コメントの終端がピリオドで有ることを検査
+    # enable setting
+    - godot
+    # FIXME, TODOなどの特定のキーワードのコメントを検知
+    # enable setting
+    - godox
+    # エラーハンドリングについて検査する
+    - goerr113
+    # go fmtが行われているか確認する
+    # enable setting
+    - gofmt
+    # gofumptが行われているか確認する
+    # enable setting
+    - gofumpt
+    # fileのヘッダーがパターンマッチしているか確認する
+    # コピーライトとか利用するときに便利
+    # enable setting
+    - goheader
+    # importの修正を行う
+    # enable setting
+    - goimports
+    # - golint # 非推奨？
+    # マジックナンバーを検出する
+    # enable setting
+    - gomnd
+    # go.modのreplace, retract, excludesの利用を制限する
+    # enable setting
+    - gomoddirectives
+    # moduleの依存関係について直接許可、ブロックを行う???
+    # enable setting
+    - gomodguard
+    # printfライクな関数がfで終わっているかチェックする
+    - goprintffuncname
+    # コードにセキュリティについて懸念が無いかチェックする
+    # enable setting
+    - gosec
+    # importや変数の宣言に対して、適切に宣言しているか解析する
+    # ex) 1つ -> import package, 複数 -> import (...)
+    # enable setting
+    - grouper
+    # ifチェックをワンライナーで実施できる部分は、ワンライナーで実施しているかチェックする
+    # ok := true; if ok {} -> if ok := true; ok {}
+    # enable setting
+    - ifshort
+    # importのaliasをモジュールごとに統一する
+    # enable setting
+    - importas
+    # - interfacer # 非推奨
+    # returnで返却可能なinterfaceを制限できる
+    # 実装オブジェクトの返却を強制したい時とかに使える
+    # enable setting
+    - ireturn
+    # 1行が長くなるのを防ぐ
+    # enable setting
+    - lll
+    # 関数のindexのmaintainabilityを検証する
+    # enable setting
+    - maintidx
+    # sliceの宣言時に、lengthを0指定していない宣言を検知する
+    # enable setting
+    - makezero
+    # - maligned # 非推奨
+    # spellミスを検知する
+    # enable setting
+    - misspell
+    # 行数が長い関数について、naked returnが使われている個所を検出
+    # naked return: 名前付き戻り値の利用時、returnだけで設定された戻り値を返却する手法
+    # enable setting
+    - nakedret
+    # ifのnestの深さを検知
+    # enable setting
+    - nestif
+    # errがnilでないときにnil返却をしている、もしくはerrがnilの時errを返却していることを検知
+    - nilerr
+    # return nil, nilを検知
+    # enable setting
+    - nilnil
+    # returnの前に空行があるか検知
+    # enable setting
+    - nlreturn
+    # ctxを付属させていないhttp requestを検知
+    - noctx
+    # no lintに対する説明の付属を強制する
+    # enable setting
+    - nolintlint
+    # testにてt.Parallel()が使われていない個所を検知する
+    - paralleltest
+    # sliceを確保するときに事前に容量をしていない個所を検知する
+    # enable setting
+    - prealloc
+    # ビルドインで利用されている命名を指摘する
+    # enable setting
+    - predeclared
+    # prometheusのメトリクスのネーミングに関するチェックを行う
+    # enable setting
+    - promlinter
+    # golint(非推奨)と似たチェックを実施する
+    # enable setting
+    - revive
+    # *database/sql.Rowsについて、rows.Err()を適切に確認しているか確認する
+    # enable setting
+    - rowserrcheck
+    # - scopelint # 非推奨
+    # sql.Rowsやsql.Stmtをcloseしているかチェックする
+    - sqlclosecheck
+    # golintのようなチェックをする
+    # enable setting
+    - stylecheck
+    # structのタグの命名をチェックする
+    # enable setting
+    - tagliatelle
+    # Go1.7以降で、t.Setenvの代わりに、os.Setenvが使われている個所を検知する
+    # testing/T.Setenvを利用するようにする
+    # enable setting
+    - tenv
+    # testを書く際に_testパッケージとして分割しているかチェックする
+    # enable setting
+    - testpackage
+    # t.Helper()の呼び出しを伴わないテストヘルパーを検知し、テストヘルパーに一貫性をもたせる
+    # enable setting
+    - thelper
+    # t.Parallel()が不適切に使われている個所を検知する
+    - tparallel
+    # 不必要な型変換を検知する
+    - unconvert
+    # 使われていない関数のパラメータを検知する
+    # enable setting
+    - unparam
+    # 変数名の長さを検知する。短すぎ、長すぎを両方検知できる。
+    # enable setting
+    - varnamelen
+    # 以降利用されない変数への代入、一度も参照される機会がない代入を検知する
+    - wastedassign
+    # 関数やif, forなどの頭と末尾に不要な改行がないか検知する
+    # enable setting
+    - whitespace
+    # 外部パッケージからのエラーをwrapしているかチェックする
+    # enable setting
+    - wrapcheck
+    # 適切な個所に空行を入れることを強制する
+    # enable setting
+    - wsl
+
+service:
+  golangci-lint-version: 1.33.x
